@@ -15,10 +15,14 @@ const AppState = {
         count: 0
     },
     team: [
-        { id: 1, name: "Juan Pérez", role: "Frontend Developer", email: "juan@techshop.com", avatar: "JP" },
-        { id: 2, name: "María García", role: "Backend Developer", email: "maria@techshop.com", avatar: "MG" },
-        { id: 3, name: "Carlos López", role: "UI/UX Designer", email: "carlos@techshop.com", avatar: "CL" },
-        { id: 4, name: "Ana Martínez", role: "Project Manager", email: "ana@techshop.com", avatar: "AM" }
+        { id: 1, name: "Sedoff Gaspar Sedoff", role: "Frontend Developer", email: "GasparSedoff@grupog.com", avatar: "SG" },
+        { id: 2, name: "Escallier Alejandro", role: "Frontend Developer", email: "EscallierAlejandro@grupog.com", avatar: "EA" },
+        { id: 3, name: "Vera Lautaro", role: "Backend Developer", email: "lautaroVera@grupog.com", avatar: "VL" },
+        { id: 4, name: "Monzón Sebastían", role: "Backend Developer", email: "Msebastian@grupog.com", avatar: "MS" },
+        { id: 5, name: "Barreyro Luciano", role: "Backend Developer", email: "Lucheti@grupog.com", avatar: "BL" },
+        { id: 6, name: "Meyer Iván", role: "UI/UX Designer", email: "MeyerIvan@grupog.com", avatar: "MI" },
+        { id: 7, name: "Viñales Facundo", role: "Project Manager", email: "vinalesFacundo@grupog.com", avatar: "VF" },
+        
     ],
     products: {},
     syncCount: 0,
