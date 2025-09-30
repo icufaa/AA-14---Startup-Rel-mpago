@@ -236,7 +236,7 @@ ecommerce-basico/
    - Save
 
 3. **Acceder al sitio**
-   - URL: `https://usuario.github.io/ecommerce-basico/`
+   - URL: `https://icufaa.github.io/AA-14---Startup-Rel-mpago`
 
 ---
 
