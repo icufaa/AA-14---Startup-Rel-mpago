@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechShop - Catálogo de Productos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🛍️ TechShop</div>
+            <div class="cart-icon" id="cartIcon">
+                🛒 Carrito (0)
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="electronics">Electrónica</button>
+            <button class="filter-btn" data-filter="accessories">Accesorios</button>
+            <button class="filter-btn" data-filter="audio">Audio</button>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" id="productsGrid">
+            <!-- Product Card 1 - Featured -->
+            <article class="product-card featured" data-category="electronics">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop" 
+                         alt="Laptop Pro" 
+                         class="product-image">
+                    <span class="product-badge">Destacado</span>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Electrónica</div>
+                    <h3 class="product-title">Laptop Pro 15"</h3>
+                    <div class="product-rating">
+                        <span class="stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-count">(128)</span>
+                    </div>
+                    <p class="product-description">Potente laptop con procesador de última generación, 16GB RAM y pantalla 4K.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$1,299</div>
+                        <button class="add-to-cart" data-product="Laptop Pro">Agregar</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Product Card 2 - Sale -->
+            <article class="product-card" data-category="accessories">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop" 
+                         alt="Mouse Inalámbrico" 
+                         class="product-image">
+                    <span class="product-badge sale">-30%</span>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Accesorios</div>
+                    <h3 class="product-title">Mouse Inalámbrico RGB</h3>
+                    <div class="product-rating">
+                        <span class="stars">⭐⭐⭐⭐</span>
+                        <span class="rating-count">(89)</span>
+                    </div>
+                    <p class="product-description">Mouse ergonómico con iluminación RGB personalizable y sensor de alta precisión.</p>
+                    <div class="product-footer">
+                        <div class="product-price discount">
+                            <span class="original-price">$79</span>
+                            <span>$55</span>
+                        </div>
+                        <button class="add-to-cart" data-product="Mouse RGB">Agregar</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Product Card 3 - New -->
+            <article class="product-card" data-category="audio">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" 
+                         alt="Auriculares" 
+                         class="product-image">
+                    <span class="product-badge new">Nuevo</span>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Audio</div>
+                    <h3 class="product-title">Auriculares Bluetooth Pro</h3>
+                    <div class="product-rating">
+                        <span class="stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-count">(245)</span>
+                    </div>
+                    <p class="product-description">Cancelación de ruido activa, 30h de batería y sonido de alta fidelidad.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$249</div>
+                        <button class="add-to-cart" data-product="Auriculares Pro">Agregar</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Product Card 4 -->
+            <article class="product-card" data-category="electronics">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1585399000684-d2f72660f092?w=400&h=300&fit=crop" 
+                         alt="Tablet" 
+                         class="product-image">
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Electrónica</div>
+                    <h3 class="product-title">Tablet Air 10.5"</h3>
+                    <div class="product-rating">
+                        <span class="stars">⭐⭐⭐⭐</span>
+                        <span class="rating-count">(167)</span>
+                    </div>
+                    <p class="product-description">Pantalla Retina, chip A14 y compatibilidad con stylus digital.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$599</div>
+                        <button class="add-to-cart" data-product="Tablet Air">Agregar</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Product Card 5 - Out of Stock -->
+            <article class="product-card out-of-stock" data-category="accessories">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop" 
+                         alt="Teclado Mecánico" 
+                         class="product-image">
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Accesorios</div>
+                    <h3 class="product-title">Teclado Mecánico RGB</h3>
+                    <div class="product-rating">
+                        <span class="stars">⭐⭐⭐⭐⭐</span>
+                        <span class="rating-count">(312)</span>
+                    </div>
+                    <p class="product-description">Switches mecánicos, retroiluminación RGB y reposamuñecas magnético.</p>
+                    <div class="product-footer">
+                        <div class="product-price">$149</div>
+                        <button class="add-to-cart" disabled>Agotado</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Product Card 6 -->
+            <article class="product-card" data-category="audio">
+                <div class="product-image-container">
+                    <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop" 
+                         alt="Altavoz" 
+                         class="product-image">
+                    <span class="product-badge sale">-20%</span>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Audio</div>
+                    <h3 class="product-title">Altavoz Inteligente</h3>
+                    <div class="product-rating">
+                        <span class="stars">⭐⭐⭐⭐</span>
+                        <span class="rating-count">(203)</span>
+                    </div>
+                    <p class="product-description">Asistente de voz integrado, sonido 360° y control por aplicación móvil.</p>
+                    <div class="product-footer">
+                        <div class="product-price discount">
+                            <span class="original-price">$199</span>
+                            <span>$159</span>
+                        </div>
+                        <button class="add-to-cart" data-product="Altavoz">Agregar</button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 TechShop - Catálogo de productos con CSS Grid</p>
+        <p style="margin-top: 0.5rem; color: var(--text-light);">
+            Proyecto: Ecommerce Básico | Metodología: SOHDM
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
