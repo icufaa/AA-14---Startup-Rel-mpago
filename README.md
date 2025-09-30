@@ -225,7 +225,7 @@ ecommerce-basico/
    git add .
    git commit -m "Initial commit"
    git branch -M main
-   git remote add origin https://github.com/usuario/ecommerce-basico.git
+   git remote add origin https://github.com/icufaa/ecommerce-basico.git
    git push -u origin main
    ```
 
