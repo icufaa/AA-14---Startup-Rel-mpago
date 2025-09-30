@@ -2,25 +2,368 @@
  * ===================================
  * ECOMMERCE BÁSICO - SCRIPT.JS
  * Metodología SOHDM
+ * Con Sincronización en Tiempo Real
  * ===================================
  */
 
-// Estado de la aplicación
-let cartCount = 0;
+// ===================================
+// ESTADO GLOBAL DE LA APLICACIÓN
+// ===================================
+const AppState = {
+    cart: {
+        items: [],
+        count: 0
+    },
+    team: [
+        { id: 1, name: "Juan Pérez", role: "Frontend Developer", email: "juan@techshop.com", avatar: "JP" },
+        { id: 2, name: "María García", role: "Backend Developer", email: "maria@techshop.com", avatar: "MG" },
+        { id: 3, name: "Carlos López", role: "UI/UX Designer", email: "carlos@techshop.com", avatar: "CL" },
+        { id: 4, name: "Ana Martínez", role: "Project Manager", email: "ana@techshop.com", avatar: "AM" }
+    ],
+    products: {},
+    syncCount: 0,
+    lastUpdate: new Date()
+};
 
-/**
- * Inicialización cuando el DOM está listo
- */
+// ===================================
+// SISTEMA DE SINCRONIZACIÓN CONCURRENTE
+// Implementación de algoritmos para tiempo real
+// ===================================
+class SyncManager {
+    constructor() {
+        this.queue = [];
+        this.isProcessing = false;
+        this.observers = [];
+        this.syncInterval = null;
+    }
+
+    /**
+     * Algoritmo de Cola de Prioridad para operaciones concurrentes
+     * Permite gestionar múltiples actualizaciones simultáneas
+     */
+    async addToQueue(operation, priority = 1) {
+        const task = {
+            id: Date.now() + Math.random(),
+            operation,
+            priority,
+            timestamp: new Date()
+        };
+
+        // Insertar en la cola según prioridad (mayor prioridad primero)
+        let inserted = false;
+        for (let i = 0; i < this.queue.length; i++) {
+            if (this.queue[i].priority < priority) {
+                this.queue.splice(i, 0, task);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) {
+            this.queue.push(task);
+        }
+
+        this.logEvent('sync', `Operación agregada a cola (Prioridad: ${priority})`);
+        
+        if (!this.isProcessing) {
+            this.processQueue();
+        }
+    }
+
+    /**
+     * Procesamiento concurrente de la cola
+     * Simula procesamiento asíncrono de múltiples operaciones
+     */
+    async processQueue() {
+        if (this.isProcessing || this.queue.length === 0) return;
+
+        this.isProcessing = true;
+        this.updateSyncStatus('syncing');
+
+        while (this.queue.length > 0) {
+            const task = this.queue.shift();
+            
+            try {
+                await this.executeTask(task);
+                await this.simulateNetworkDelay();
+            } catch (error) {
+                console.error('Error procesando tarea:', error);
+            }
+        }
+
+        this.isProcessing = false;
+        this.updateSyncStatus('synced');
+        AppState.syncCount++;
+        this.updateSyncCounter();
+    }
+
+    /**
+     * Ejecuta una tarea individual
+     */
+    async executeTask(task) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                task.operation();
+                this.notifyObservers(task);
+                resolve();
+            }, 100);
+        });
+    }
+
+    /**
+     * Simula latencia de red para hacer visible el proceso
+     */
+    async simulateNetworkDelay() {
+        return new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    /**
+     * Patrón Observer para notificar cambios
+     */
+    subscribe(observer) {
+        this.observers.push(observer);
+    }
+
+    notifyObservers(data) {
+        this.observers.forEach(observer => observer(data));
+    }
+
+    /**
+     * Actualiza el estado visual de sincronización
+     */
+    updateSyncStatus(status) {
+        const syncStatus = document.getElementById('syncStatus');
+        const syncText = document.getElementById('syncText');
+        
+        if (status === 'syncing') {
+            syncStatus.classList.remove('synced');
+            syncStatus.classList.add('syncing');
+            syncText.textContent = 'Sincronizando...';
+        } else {
+            syncStatus.classList.remove('syncing');
+            syncStatus.classList.add('synced');
+            syncText.textContent = 'Sincronizado';
+        }
+    }
+
+    updateSyncCounter() {
+        document.getElementById('syncCount').textContent = AppState.syncCount;
+    }
+
+    /**
+     * Sistema de logging en tiempo real
+     */
+    logEvent(type, message) {
+        const log = document.getElementById('realtimeLog');
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}-update`;
+        
+        const time = new Date().toLocaleTimeString();
+        entry.textContent = `[${time}] ${message}`;
+        
+        log.insertBefore(entry, log.firstChild);
+        
+        // Limitar a 10 entradas
+        while (log.children.length > 10) {
+            log.removeChild(log.lastChild);
+        }
+    }
+
+    /**
+     * Inicia sincronización automática periódica
+     * Simula actualizaciones de stock en tiempo real
+     */
+    startAutoSync(interval = 10000) {
+        this.syncInterval = setInterval(() => {
+            this.simulateStockUpdate();
+        }, interval);
+    }
+
+    /**
+     * Simula actualización de stock de forma aleatoria
+     */
+    simulateStockUpdate() {
+        const productCards = document.querySelectorAll('.product-card');
+        const randomCard = productCards[Math.floor(Math.random() * productCards.length)];
+        const stockElement = randomCard.querySelector('.stock-count');
+        
+        if (stockElement) {
+            const currentStock = parseInt(stockElement.dataset.stock);
+            const change = Math.floor(Math.random() * 5) - 2; // -2 a +2
+            const newStock = Math.max(0, currentStock + change);
+            
+            this.addToQueue(() => {
+                stockElement.dataset.stock = newStock;
+                stockElement.textContent = newStock;
+                
+                const productName = randomCard.querySelector('.product-title').textContent;
+                this.logEvent('stock', `${productName}: Stock actualizado a ${newStock} unidades`);
+                
+                // Actualizar estado del producto
+                if (newStock === 0) {
+                    randomCard.classList.add('out-of-stock');
+                    const btn = randomCard.querySelector('.add-to-cart');
+                    btn.disabled = true;
+                    btn.textContent = 'Agotado';
+                } else {
+                    randomCard.classList.remove('out-of-stock');
+                    const btn = randomCard.querySelector('.add-to-cart');
+                    btn.disabled = false;
+                    btn.textContent = 'Agregar';
+                }
+            }, 2);
+        }
+    }
+
+    stopAutoSync() {
+        if (this.syncInterval) {
+            clearInterval(this.syncInterval);
+        }
+    }
+}
+
+// Instancia global del gestor de sincronización
+const syncManager = new SyncManager();
+
+// ===================================
+// INICIALIZACIÓN
+// ===================================
 document.addEventListener('DOMContentLoaded', function() {
+    initApp();
     initFilters();
     initCart();
+    initTeamSection();
+    initStockTracking();
+    
+    // Iniciar sincronización automática
+    syncManager.startAutoSync(15000); // Cada 15 segundos
+    
+    syncManager.logEvent('sync', 'Sistema inicializado correctamente');
 });
 
-/**
- * ===================================
- * SISTEMA DE FILTROS
- * ===================================
- */
+function initApp() {
+    renderTeam();
+    updateLastUpdate();
+    updateSyncCounter();
+}
+
+function updateLastUpdate() {
+    const lastUpdateEl = document.getElementById('lastUpdate');
+    const now = new Date();
+    lastUpdateEl.textContent = now.toLocaleString('es-AR');
+}
+
+function updateSyncCounter() {
+    document.getElementById('syncCount').textContent = AppState.syncCount;
+}
+
+// ===================================
+// GESTIÓN DEL EQUIPO
+// ===================================
+function initTeamSection() {
+    const editBtn = document.getElementById('editTeamBtn');
+    const modal = document.getElementById('teamModal');
+    const closeBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelEdit');
+    const saveBtn = document.getElementById('saveTeam');
+
+    editBtn.addEventListener('click', () => openTeamModal());
+    closeBtn.addEventListener('click', () => closeTeamModal());
+    cancelBtn.addEventListener('click', () => closeTeamModal());
+    saveBtn.addEventListener('click', () => saveTeamChanges());
+}
+
+function renderTeam() {
+    const teamGrid = document.getElementById('teamGrid');
+    teamGrid.innerHTML = '';
+
+    AppState.team.forEach(member => {
+        const memberCard = createTeamMemberCard(member);
+        teamGrid.appendChild(memberCard);
+    });
+}
+
+function createTeamMemberCard(member) {
+    const card = document.createElement('div');
+    card.className = 'team-member';
+    card.dataset.id = member.id;
+    
+    card.innerHTML = `
+        <div class="team-member-header">
+            <div class="member-avatar">${member.avatar}</div>
+            <div class="member-info">
+                <h4>${member.name}</h4>
+                <div class="member-role">${member.role}</div>
+            </div>
+        </div>
+        <div class="member-email">${member.email}</div>
+    `;
+    
+    return card;
+}
+
+function openTeamModal() {
+    const modal = document.getElementById('teamModal');
+    const form = document.getElementById('teamForm');
+    
+    form.innerHTML = '';
+    
+    AppState.team.forEach((member, index) => {
+        form.innerHTML += `
+            <div class="form-group">
+                <label>Nombre del Miembro ${index + 1}</label>
+                <input type="text" id="name-${member.id}" value="${member.name}" required>
+            </div>
+            <div class="form-group">
+                <label>Rol</label>
+                <input type="text" id="role-${member.id}" value="${member.role}" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email-${member.id}" value="${member.email}" required>
+            </div>
+            <hr style="margin: 1.5rem 0; border: 1px solid var(--border);">
+        `;
+    });
+    
+    modal.classList.add('active');
+}
+
+function closeTeamModal() {
+    const modal = document.getElementById('teamModal');
+    modal.classList.remove('active');
+}
+
+function saveTeamChanges() {
+    syncManager.addToQueue(() => {
+        AppState.team.forEach(member => {
+            const nameInput = document.getElementById(`name-${member.id}`);
+            const roleInput = document.getElementById(`role-${member.id}`);
+            const emailInput = document.getElementById(`email-${member.id}`);
+            
+            if (nameInput && roleInput && emailInput) {
+                member.name = nameInput.value;
+                member.role = roleInput.value;
+                member.email = emailInput.value;
+                
+                // Actualizar avatar con iniciales
+                const names = member.name.split(' ');
+                member.avatar = names.map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            }
+        });
+        
+        renderTeam();
+        AppState.lastUpdate = new Date();
+        updateLastUpdate();
+        closeTeamModal();
+        
+        syncManager.logEvent('team', 'Datos del equipo actualizados');
+        showNotification('✅ Equipo actualizado correctamente');
+    }, 3);
+}
+
+// ===================================
+// SISTEMA DE FILTROS
+// ===================================
 function initFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     
@@ -33,10 +376,6 @@ function initFilters() {
     });
 }
 
-/**
- * Filtra productos por categoría
- * @param {string} category - Categoría a filtrar
- */
 function filterProducts(category) {
     const products = document.querySelectorAll('.product-card');
     
@@ -45,7 +384,6 @@ function filterProducts(category) {
         
         if (category === 'all' || productCategory === category) {
             product.style.display = 'flex';
-            // Animación de entrada
             product.style.animation = 'fadeIn 0.5s ease';
         } else {
             product.style.display = 'none';
@@ -53,10 +391,6 @@ function filterProducts(category) {
     });
 }
 
-/**
- * Actualiza el botón de filtro activo
- * @param {HTMLElement} activeButton - Botón que fue clickeado
- */
 function updateActiveFilter(activeButton) {
     const allButtons = document.querySelectorAll('.filter-btn');
     
@@ -67,11 +401,9 @@ function updateActiveFilter(activeButton) {
     activeButton.classList.add('active');
 }
 
-/**
- * ===================================
- * SISTEMA DE CARRITO
- * ===================================
- */
+// ===================================
+// SISTEMA DE CARRITO
+// ===================================
 function initCart() {
     const addToCartButtons = document.querySelectorAll('.add-to-cart');
     const cartIcon = document.getElementById('cartIcon');
@@ -80,39 +412,57 @@ function initCart() {
         button.addEventListener('click', function() {
             if (!this.disabled) {
                 const productName = this.dataset.product;
-                addToCart(productName);
+                const productId = this.dataset.id;
+                addToCart(productName, productId);
             }
         });
     });
     
-    // Click en el ícono del carrito
     cartIcon.addEventListener('click', function() {
         showCartSummary();
     });
 }
 
-/**
- * Agrega un producto al carrito
- * @param {string} productName - Nombre del producto
- */
-function addToCart(productName) {
-    cartCount++;
-    updateCartDisplay();
-    animateCartIcon();
-    showNotification(`"${productName}" agregado al carrito`);
+function addToCart(productName, productId) {
+    syncManager.addToQueue(() => {
+        AppState.cart.count++;
+        AppState.cart.items.push({ name: productName, id: productId });
+        
+        updateCartDisplay();
+        animateCartIcon();
+        updateStockOnPurchase(productId);
+        
+        syncManager.logEvent('cart', `"${productName}" agregado al carrito`);
+        showNotification(`"${productName}" agregado al carrito`);
+    }, 2);
 }
 
-/**
- * Actualiza la visualización del carrito
- */
+function updateStockOnPurchase(productId) {
+    const product = document.querySelector(`.product-card[data-id="${productId}"]`);
+    if (product) {
+        const stockElement = product.querySelector('.stock-count');
+        const currentStock = parseInt(stockElement.dataset.stock);
+        
+        if (currentStock > 0) {
+            const newStock = currentStock - 1;
+            stockElement.dataset.stock = newStock;
+            stockElement.textContent = newStock;
+            
+            if (newStock === 0) {
+                product.classList.add('out-of-stock');
+                const btn = product.querySelector('.add-to-cart');
+                btn.disabled = true;
+                btn.textContent = 'Agotado';
+            }
+        }
+    }
+}
+
 function updateCartDisplay() {
     const cartIcon = document.getElementById('cartIcon');
-    cartIcon.textContent = `🛒 Carrito (${cartCount})`;
+    cartIcon.textContent = `🛒 Carrito (${AppState.cart.count})`;
 }
 
-/**
- * Anima el ícono del carrito
- */
 function animateCartIcon() {
     const cartIcon = document.getElementById('cartIcon');
     
@@ -123,29 +473,42 @@ function animateCartIcon() {
     }, 200);
 }
 
-/**
- * Muestra un resumen del carrito
- */
 function showCartSummary() {
-    if (cartCount === 0) {
+    if (AppState.cart.count === 0) {
         alert('El carrito está vacío\n\n¡Agrega algunos productos!');
     } else {
-        alert(`🛒 Resumen del Carrito\n\nProductos en el carrito: ${cartCount}\n\n✨ Funcionalidad de carrito completo próximamente...`);
+        const items = AppState.cart.items.map(item => `- ${item.name}`).join('\n');
+        alert(`🛒 Resumen del Carrito\n\nProductos: ${AppState.cart.count}\n\n${items}\n\n✨ Funcionalidad de pago próximamente...`);
     }
 }
 
-/**
- * ===================================
- * SISTEMA DE NOTIFICACIONES
- * ===================================
- */
+// ===================================
+// TRACKING DE STOCK
+// ===================================
+function initStockTracking() {
+    const products = document.querySelectorAll('.product-card');
+    
+    products.forEach(product => {
+        const productId = product.dataset.id;
+        const stockElement = product.querySelector('.stock-count');
+        
+        if (stockElement) {
+            AppState.products[productId] = {
+                stock: parseInt(stockElement.dataset.stock),
+                name: product.querySelector('.product-title').textContent
+            };
+        }
+    });
+}
+
+// ===================================
+// SISTEMA DE NOTIFICACIONES
+// ===================================
 function showNotification(message) {
-    // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.textContent = message;
     
-    // Estilos inline (alternativamente se pueden agregar al CSS)
     notification.style.cssText = `
         position: fixed;
         top: 100px;
@@ -162,7 +525,6 @@ function showNotification(message) {
     
     document.body.appendChild(notification);
     
-    // Remover después de 3 segundos
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => {
@@ -171,52 +533,9 @@ function showNotification(message) {
     }, 3000);
 }
 
-/**
- * ===================================
- * UTILIDADES
- * ===================================
- */
-
-/**
- * Formatea precio a formato de moneda
- * @param {number} price - Precio a formatear
- * @returns {string} Precio formateado
- */
-function formatPrice(price) {
-    return new Intl.NumberFormat('es-AR', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(price);
-}
-
-/**
- * Obtiene todos los productos visibles
- * @returns {Array} Array de elementos de producto
- */
-function getVisibleProducts() {
-    const products = document.querySelectorAll('.product-card');
-    return Array.from(products).filter(product => {
-        return product.style.display !== 'none';
-    });
-}
-
-/**
- * Cuenta productos por categoría
- * @returns {Object} Objeto con conteo por categoría
- */
-function countProductsByCategory() {
-    const products = document.querySelectorAll('.product-card');
-    const counts = {};
-    
-    products.forEach(product => {
-        const category = product.dataset.category;
-        counts[category] = (counts[category] || 0) + 1;
-    });
-    
-    return counts;
-}
-
-// Agregar animaciones CSS dinámicamente
+// ===================================
+// ANIMACIONES CSS DINÁMICAS
+// ===================================
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeIn {
@@ -254,6 +573,11 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-
-console.log('🛍️ TechShop Ecommerce cargado correctamente');
-console.log('📊 Productos por categoría:', countProductsByCategory());
+// ===================================
+// DEBUGGING Y CONSOLE
+// ===================================
+console.log('%c🛍️ TechShop Ecommerce', 'font-size: 20px; color: #2563eb; font-weight: bold;');
+console.log('%cSistema cargado correctamente', 'color: #10b981;');
+console.log('📊 Estado inicial:', AppState);
+console.log('🔄 Sistema de sincronización activo');
+console.log('⚡ Algoritmos concurrentes implementados');

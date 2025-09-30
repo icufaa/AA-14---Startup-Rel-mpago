@@ -11,14 +11,49 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">🛍️ TechShop</div>
-            <div class="cart-icon" id="cartIcon">
-                🛒 Carrito (0)
+            <div class="header-right">
+                <div class="sync-status" id="syncStatus">
+                    <span class="sync-icon">🔄</span>
+                    <span id="syncText">Sincronizado</span>
+                </div>
+                <div class="cart-icon" id="cartIcon">
+                    🛒 Carrito (0)
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
     <div class="container">
+        <!-- Team Section - Datos Actualizables -->
+        <section class="team-section" id="teamSection">
+            <div class="team-header">
+                <h2>👥 Equipo de Desarrollo</h2>
+                <button class="edit-team-btn" id="editTeamBtn">✏️ Editar Equipo</button>
+            </div>
+            <div class="team-grid" id="teamGrid">
+                <!-- Los miembros se cargan dinámicamente desde JS -->
+            </div>
+            <div class="team-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Última actualización:</span>
+                    <span class="stat-value" id="lastUpdate">Cargando...</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Sincronizaciones:</span>
+                    <span class="stat-value" id="syncCount">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Updates Section -->
+        <section class="realtime-section">
+            <h3>📊 Actualizaciones en Tiempo Real</h3>
+            <div class="realtime-log" id="realtimeLog">
+                <!-- Log de eventos en tiempo real -->
+            </div>
+        </section>
+
         <!-- Filters -->
         <div class="filters">
             <button class="filter-btn active" data-filter="all">Todos</button>
@@ -30,7 +65,7 @@
         <!-- Products Grid -->
         <div class="products-grid" id="productsGrid">
             <!-- Product Card 1 - Featured -->
-            <article class="product-card featured" data-category="electronics">
+            <article class="product-card featured" data-category="electronics" data-id="1">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop" 
                          alt="Laptop Pro" 
@@ -45,15 +80,18 @@
                         <span class="rating-count">(128)</span>
                     </div>
                     <p class="product-description">Potente laptop con procesador de última generación, 16GB RAM y pantalla 4K.</p>
+                    <div class="product-stock">
+                        Stock: <span class="stock-count" data-stock="15">15</span> unidades
+                    </div>
                     <div class="product-footer">
                         <div class="product-price">$1,299</div>
-                        <button class="add-to-cart" data-product="Laptop Pro">Agregar</button>
+                        <button class="add-to-cart" data-product="Laptop Pro" data-id="1">Agregar</button>
                     </div>
                 </div>
             </article>
 
             <!-- Product Card 2 - Sale -->
-            <article class="product-card" data-category="accessories">
+            <article class="product-card" data-category="accessories" data-id="2">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop" 
                          alt="Mouse Inalámbrico" 
@@ -68,18 +106,21 @@
                         <span class="rating-count">(89)</span>
                     </div>
                     <p class="product-description">Mouse ergonómico con iluminación RGB personalizable y sensor de alta precisión.</p>
+                    <div class="product-stock">
+                        Stock: <span class="stock-count" data-stock="32">32</span> unidades
+                    </div>
                     <div class="product-footer">
                         <div class="product-price discount">
                             <span class="original-price">$79</span>
                             <span>$55</span>
                         </div>
-                        <button class="add-to-cart" data-product="Mouse RGB">Agregar</button>
+                        <button class="add-to-cart" data-product="Mouse RGB" data-id="2">Agregar</button>
                     </div>
                 </div>
             </article>
 
             <!-- Product Card 3 - New -->
-            <article class="product-card" data-category="audio">
+            <article class="product-card" data-category="audio" data-id="3">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" 
                          alt="Auriculares" 
@@ -94,15 +135,18 @@
                         <span class="rating-count">(245)</span>
                     </div>
                     <p class="product-description">Cancelación de ruido activa, 30h de batería y sonido de alta fidelidad.</p>
+                    <div class="product-stock">
+                        Stock: <span class="stock-count" data-stock="8">8</span> unidades
+                    </div>
                     <div class="product-footer">
                         <div class="product-price">$249</div>
-                        <button class="add-to-cart" data-product="Auriculares Pro">Agregar</button>
+                        <button class="add-to-cart" data-product="Auriculares Pro" data-id="3">Agregar</button>
                     </div>
                 </div>
             </article>
 
             <!-- Product Card 4 -->
-            <article class="product-card" data-category="electronics">
+            <article class="product-card" data-category="electronics" data-id="4">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1585399000684-d2f72660f092?w=400&h=300&fit=crop" 
                          alt="Tablet" 
@@ -116,15 +160,18 @@
                         <span class="rating-count">(167)</span>
                     </div>
                     <p class="product-description">Pantalla Retina, chip A14 y compatibilidad con stylus digital.</p>
+                    <div class="product-stock">
+                        Stock: <span class="stock-count" data-stock="22">22</span> unidades
+                    </div>
                     <div class="product-footer">
                         <div class="product-price">$599</div>
-                        <button class="add-to-cart" data-product="Tablet Air">Agregar</button>
+                        <button class="add-to-cart" data-product="Tablet Air" data-id="4">Agregar</button>
                     </div>
                 </div>
             </article>
 
             <!-- Product Card 5 - Out of Stock -->
-            <article class="product-card out-of-stock" data-category="accessories">
+            <article class="product-card out-of-stock" data-category="accessories" data-id="5">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop" 
                          alt="Teclado Mecánico" 
@@ -138,6 +185,9 @@
                         <span class="rating-count">(312)</span>
                     </div>
                     <p class="product-description">Switches mecánicos, retroiluminación RGB y reposamuñecas magnético.</p>
+                    <div class="product-stock">
+                        Stock: <span class="stock-count" data-stock="0">0</span> unidades
+                    </div>
                     <div class="product-footer">
                         <div class="product-price">$149</div>
                         <button class="add-to-cart" disabled>Agotado</button>
@@ -146,7 +196,7 @@
             </article>
 
             <!-- Product Card 6 -->
-            <article class="product-card" data-category="audio">
+            <article class="product-card" data-category="audio" data-id="6">
                 <div class="product-image-container">
                     <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop" 
                          alt="Altavoz" 
@@ -161,24 +211,59 @@
                         <span class="rating-count">(203)</span>
                     </div>
                     <p class="product-description">Asistente de voz integrado, sonido 360° y control por aplicación móvil.</p>
+                    <div class="product-stock">
+                        Stock: <span class="stock-count" data-stock="45">45</span> unidades
+                    </div>
                     <div class="product-footer">
                         <div class="product-price discount">
                             <span class="original-price">$199</span>
                             <span>$159</span>
                         </div>
-                        <button class="add-to-cart" data-product="Altavoz">Agregar</button>
+                        <button class="add-to-cart" data-product="Altavoz" data-id="6">Agregar</button>
                     </div>
                 </div>
             </article>
         </div>
     </div>
 
+    <!-- Modal para editar equipo -->
+    <div class="modal" id="teamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Datos del Equipo</h3>
+                <button class="close-modal" id="closeModal">×</button>
+            </div>
+            <div class="modal-body" id="teamForm">
+                <!-- Formulario generado dinámicamente -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEdit">Cancelar</button>
+                <button class="btn-primary" id="saveTeam">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 TechShop - Catálogo de productos con CSS Grid</p>
-        <p style="margin-top: 0.5rem; color: var(--text-light);">
-            Proyecto: Ecommerce Básico | Metodología: SOHDM
-        </p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Metodología SOHDM</h4>
+                <p><strong>S</strong>emántico: HTML5 con estructura clara</p>
+                <p><strong>O</strong>rganizado: CSS modular con variables</p>
+                <p><strong>H</strong>eurístico: UX intuitiva y feedback inmediato</p>
+                <p><strong>D</strong>ocumentado: Código comentado y legible</p>
+                <p><strong>M</strong>antenible: Componentes reutilizables</p>
+            </div>
+            <div class="footer-section">
+                <h4>Características Técnicas</h4>
+                <p>✅ CSS Grid Responsivo</p>
+                <p>✅ Componentes Reutilizables</p>
+                <p>✅ Sincronización en Tiempo Real</p>
+                <p>✅ Algoritmos Concurrentes</p>
+                <p>✅ Gestión de Estados Visuales</p>
+            </div>
+        </div>
+        <p style="margin-top: 1rem; text-align: center;">&copy; 2024 TechShop - Proyecto Ecommerce Básico</p>
     </footer>
 
     <script src="script.js"></script>

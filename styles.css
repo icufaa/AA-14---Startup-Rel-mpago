@@ -21,11 +21,12 @@
     --text-light: #64748b;
     --border: #e2e8f0;
     --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
     --shadow: 0 1px 3px rgba(0,0,0,0.1);
     --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* Body base */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     background: var(--bg);
@@ -53,10 +54,44 @@ body {
     align-items: center;
 }
 
+.header-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
 .logo {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--primary);
+}
+
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.sync-icon {
+    animation: rotate 2s linear infinite;
+}
+
+.sync-status.syncing .sync-icon {
+    color: var(--warning);
+}
+
+.sync-status.synced .sync-icon {
+    color: var(--success);
+    animation: none;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .cart-icon {
@@ -72,6 +107,312 @@ body {
 .cart-icon:hover {
     background: var(--primary-dark);
     transform: scale(1.05);
+}
+
+/* ===================================
+   TEAM SECTION - Datos Actualizables
+   =================================== */
+.team-section {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.team-header h2 {
+    color: var(--text);
+    font-size: 1.5rem;
+}
+
+.edit-team-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.edit-team-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.team-member {
+    background: var(--bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.team-member:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+.team-member-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.member-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.member-info h4 {
+    margin: 0;
+    color: var(--text);
+}
+
+.member-role {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.member-email {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-top: 0.5rem;
+}
+
+.team-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: var(--bg);
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* ===================================
+   REAL-TIME SECTION
+   =================================== */
+.realtime-section {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.realtime-section h3 {
+    margin-bottom: 1rem;
+}
+
+.realtime-log {
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg);
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+}
+
+.log-entry {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid var(--primary);
+    background: var(--card-bg);
+    border-radius: 4px;
+    animation: slideInLeft 0.3s ease;
+}
+
+.log-entry.stock-update {
+    border-left-color: var(--warning);
+}
+
+.log-entry.cart-update {
+    border-left-color: var(--success);
+}
+
+.log-entry.team-update {
+    border-left-color: var(--primary);
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===================================
+   MODAL
+   =================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: var(--danger);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #475569;
 }
 
 /* ===================================
@@ -116,7 +457,7 @@ body {
 }
 
 /* ===================================
-   PRODUCTS GRID - CSS GRID
+   PRODUCTS GRID
    =================================== */
 .products-grid {
     display: grid;
@@ -126,7 +467,7 @@ body {
 }
 
 /* ===================================
-   PRODUCT CARD COMPONENT (Reutilizable)
+   PRODUCT CARD
    =================================== */
 .product-card {
     background: var(--card-bg);
@@ -143,7 +484,6 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-/* Estados visuales del producto */
 .product-card.out-of-stock {
     opacity: 0.6;
 }
@@ -152,9 +492,6 @@ body {
     border: 2px solid var(--primary);
 }
 
-/* ===================================
-   PRODUCT IMAGE
-   =================================== */
 .product-image-container {
     position: relative;
     width: 100%;
@@ -174,9 +511,6 @@ body {
     transform: scale(1.05);
 }
 
-/* ===================================
-   PRODUCT BADGES
-   =================================== */
 .product-badge {
     position: absolute;
     top: 12px;
@@ -191,16 +525,13 @@ body {
 }
 
 .product-badge.sale {
-    background: #ef4444;
+    background: var(--danger);
 }
 
 .product-badge.new {
     background: var(--success);
 }
 
-/* ===================================
-   PRODUCT INFO
-   =================================== */
 .product-info {
     padding: 1.5rem;
     flex-grow: 1;
@@ -230,9 +561,6 @@ body {
     flex-grow: 1;
 }
 
-/* ===================================
-   PRODUCT RATING
-   =================================== */
 .product-rating {
     display: flex;
     align-items: center;
@@ -250,9 +578,21 @@ body {
     color: var(--text-light);
 }
 
-/* ===================================
-   PRODUCT FOOTER
-   =================================== */
+.product-stock {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+.stock-count {
+    font-weight: 700;
+    color: var(--success);
+}
+
+.stock-count[data-stock="0"] {
+    color: var(--danger);
+}
+
 .product-footer {
     display: flex;
     justify-content: space-between;
@@ -260,9 +600,6 @@ body {
     margin-top: auto;
 }
 
-/* ===================================
-   PRODUCT PRICE
-   =================================== */
 .product-price {
     font-size: 1.5rem;
     font-weight: 700;
@@ -281,9 +618,6 @@ body {
     text-decoration: line-through;
 }
 
-/* ===================================
-   ADD TO CART BUTTON
-   =================================== */
 .add-to-cart {
     background: var(--primary);
     color: white;
@@ -318,20 +652,32 @@ body {
 .footer {
     background: var(--card-bg);
     padding: 2rem;
-    text-align: center;
     margin-top: 3rem;
     box-shadow: var(--shadow);
 }
 
-.footer p {
-    color: var(--text);
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.footer-section p {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
 }
 
 /* ===================================
    RESPONSIVE DESIGN
    =================================== */
-
-/* Tablets */
 @media (max-width: 768px) {
     .products-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -350,9 +696,16 @@ body {
         flex-direction: column;
         gap: 1rem;
     }
+
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
     .products-grid {
         grid-template-columns: 1fr;
